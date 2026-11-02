@@ -307,18 +307,57 @@ const INTERCHANGE_STATION_NAMES = {
   'C-A': 'Calle 76',
   'F-E': 'Ricaurte',
   'F-G': 'Ricaurte',
+  'F-B': 'Ricaurte',
+  'F-C': 'Ricaurte',
+  'F-D': 'Ricaurte',
   'F-A': 'Avenida Jiménez',
   'F-H': 'Avenida Jiménez',
+  'F-K': 'Ricaurte',
+  'F-L': 'Avenida Jiménez',
+  'G-B': 'CAD',
+  'G-C': 'La Castellana',
+  'G-D': 'Escuela Militar',
   'K-E': 'Av. El Dorado',
   'K-G': 'Av. El Dorado',
+  'K-B': 'Av. El Dorado',
+  'K-C': 'Av. El Dorado',
+  'K-D': 'Av. El Dorado',
   'K-A': 'Calle 26',
   'K-L': 'San Diego',
   'L-A': 'Tercer Milenio',
   'L-H': 'Hospitales',
   'L-G': 'Bicentenario',
+  'L-B': 'San Diego',
+  'L-C': 'San Diego',
   'E-G': 'General Santander',
   'A-H': 'Avenida 39',
   'B-H': 'Calle 72'
+};
+
+// Grafo de corredores troncales intermedios por los que viajan los servicios de buses expresos de TransMilenio
+export const TRUNK_CORRIDOR_CHAINS = {
+  'F-B': ['F', 'E', 'B'], // Servicio B28/F28: Américas -> Ricaurte -> NQS Central -> Autonorte
+  'B-F': ['B', 'E', 'F'],
+  'F-C': ['F', 'E', 'C'], // Servicio C19/F19: Américas -> Ricaurte -> NQS Central -> Suba
+  'C-F': ['C', 'E', 'F'],
+  'F-D': ['F', 'E', 'D'], // Américas -> Ricaurte -> NQS -> Calle 80
+  'D-F': ['D', 'E', 'F'],
+  'G-B': ['G', 'E', 'B'], // Servicio B12/G12: NQS Sur -> NQS Central -> Autonorte
+  'B-G': ['B', 'E', 'G'],
+  'G-C': ['G', 'E', 'C'], // Servicio C30/G30: NQS Sur -> NQS Central -> Suba
+  'C-G': ['C', 'E', 'G'],
+  'G-D': ['G', 'E', 'D'], // Servicio D22/G22: NQS Sur -> NQS Central -> Calle 80
+  'D-G': ['D', 'E', 'G'],
+  'K-B': ['K', 'E', 'B'], // Servicio B16/K16: Calle 26 -> NQS Central -> Autonorte
+  'B-K': ['B', 'E', 'K'],
+  'K-C': ['K', 'E', 'C'], // Calle 26 -> NQS -> Suba
+  'C-K': ['C', 'E', 'K'],
+  'H-B': ['H', 'A', 'B'], // Servicio B27/H27: Caracas Sur -> Caracas Centro -> Autonorte
+  'B-H': ['B', 'A', 'H'],
+  'H-C': ['H', 'A', 'C'], // Servicio C17/H17: Caracas Sur -> Caracas Centro -> Suba
+  'C-H': ['C', 'A', 'H'],
+  'L-B': ['L', 'A', 'B'], // Servicio B18/L18: Carrera 10 -> Caracas -> Autonorte
+  'B-L': ['B', 'A', 'L']
 };
 
 // 3. RUTAS ALIMENTADORAS REALES POR PORTAL (100% OFICIALES CON PARADEROS)
@@ -1191,6 +1230,7 @@ export function getTrunkRoutePlan(stOrigin, stDest, allStations) {
   // Estaciones intermedias estrictas en la troncal
   const intermediateList = [];
   const sameTrunk = letraO === letraD;
+  const corridorChain = TRUNK_CORRIDOR_CHAINS[pairKey1] || TRUNK_CORRIDOR_CHAINS[pairKey2];
 
   if (sameTrunk) {
     // Todas las estaciones de la misma troncal entre stOrigin y stDest
@@ -1205,6 +1245,40 @@ export function getTrunkRoutePlan(stOrigin, stDest, allStations) {
       }
     }
     intermediateList.sort((a, b) => a.prog - b.prog);
+  } else if (corridorChain && corridorChain.length > 2) {
+    // Multi-corredor oficial de TransMilenio (ej. F -> E -> B para el B28)
+    // Extrae estaciones clave a lo largo de cada troncal en la cadena
+    for (let cIdx = 0; cIdx < corridorChain.length; cIdx++) {
+      const currentLetra = corridorChain[cIdx];
+      const inTrunk = allStations.filter(s => s.troncalLetra === currentLetra && s.nombre !== stOrigin.nombre && s.nombre !== stDest.nombre);
+      
+      if (currentLetra === 'F') {
+        // Américas: desde el origen hacia Ricaurte (oeste a este)
+        const fSts = inTrunk.filter(s => s.coordenadas[0] >= stOrigin.coordenadas[0] && s.coordenadas[0] <= -74.088);
+        fSts.sort((a, b) => a.coordenadas[0] - b.coordenadas[0]);
+        intermediateList.push(...fSts.filter((_, i) => i % 2 === 0));
+      } else if (currentLetra === 'E') {
+        // NQS Central: de sur a norte (Ricaurte a La Castellana)
+        const eSts = [...inTrunk].filter(s => s.coordenadas[1] >= 4.605 && s.coordenadas[1] <= 4.680);
+        eSts.sort((a, b) => a.coordenadas[1] - b.coordenadas[1]);
+        intermediateList.push(...eSts.filter((_, i) => i % 2 === 0));
+      } else if (currentLetra === 'B') {
+        // Autopista Norte: de sur a norte hacia el destino
+        const bSts = inTrunk.filter(s => s.coordenadas[1] >= 4.665 && s.coordenadas[1] <= stDest.coordenadas[1]);
+        bSts.sort((a, b) => a.coordenadas[1] - b.coordenadas[1]);
+        intermediateList.push(...bSts.filter((_, i) => i % 2 === 0));
+      } else if (currentLetra === 'G') {
+        // NQS Sur: de sur a norte hacia Ricaurte / CAD
+        const gSts = [...inTrunk].sort((a, b) => a.coordenadas[1] - b.coordenadas[1]);
+        intermediateList.push(...gSts.filter((_, i) => i % 2 === 0));
+      } else if (currentLetra === 'C') {
+        // Suba: de sur a norte
+        const cSts = [...inTrunk].sort((a, b) => a.coordenadas[1] - b.coordenadas[1]);
+        intermediateList.push(...cSts.filter((_, i) => i % 2 === 0));
+      } else {
+        intermediateList.push(...inTrunk.slice(0, 3));
+      }
+    }
   } else if (transferStation) {
     // Troncal 1 hasta el transbordo
     const t1Stations = allStations.filter((s) => s.troncalLetra === letraO && s.nombre !== stOrigin.nombre && s.nombre !== transferStation.nombre);
@@ -1241,7 +1315,7 @@ export function getTrunkRoutePlan(stOrigin, stDest, allStations) {
 
   if (intermediateList.length > 0) {
     // Muestreo balanceado de estaciones para no saturar la URL de OSRM
-    const step = Math.max(1, Math.floor(intermediateList.length / 5));
+    const step = Math.max(1, Math.floor(intermediateList.length / 7));
     for (let i = 0; i < intermediateList.length; i += step) {
       waypoints.push([intermediateList[i].coordenadas[1], intermediateList[i].coordenadas[0]]);
     }
@@ -1430,10 +1504,15 @@ export async function computeMultimodalRoutes(origin, destination, stations = []
   let feederMin = alimentadorEstMin;
 
   if (useAlimentador) {
-    const feederOsrm = await fetchOsrmGeometry('driving', [
-      [oLat, oLng],
-      [portalOrigin.coordenadas[1], portalOrigin.coordenadas[0]]
-    ]);
+    const feederWaypoints = [[oLat, oLng]];
+    if (portalOrigin.nombre.toLowerCase().includes('banderas')) {
+      // Corredor oficial de buses alimentadores de Castilla (Calle 10, Carrera 78, Calle 8 y Av. Américas hacia Banderas)
+      feederWaypoints.push([4.6415, -74.1485]); // CL 10 con KR 78
+      feederWaypoints.push([4.6355, -74.1460]); // KR 78 con CL 8 / Pío XII
+    }
+    feederWaypoints.push([portalOrigin.coordenadas[1], portalOrigin.coordenadas[0]]);
+
+    const feederOsrm = await fetchOsrmGeometry('driving', feederWaypoints);
     if (feederOsrm.latlngs && feederOsrm.latlngs.length > 0) {
       feederPoints = feederOsrm.latlngs;
       feederDistKm = feederOsrm.distanceKm;
@@ -1536,13 +1615,24 @@ export async function computeMultimodalRoutes(origin, destination, stations = []
   };
 
   // 4. RUTA: SOLO SITP ZONAL (🔵 100% Ruta de Bus Azul Real)
-  const sitpOsrm = await fetchOsrmGeometry('driving', [
-    [oLat, oLng],
-    [dLat, dLng]
-  ]);
+  const realZonal = getRealSitpRoute(origin.nombre || '', destination.nombre || '');
+  const sitpWaypoints = [[oLat, oLng]];
+  
+  // Canales arteriales por donde transitan los buses SITP Zonal (ej. C115, T62, F401)
+  if (oLng < -74.12 && dLat > 4.66) {
+    sitpWaypoints.push([4.631, -74.145]); // Av. Américas (Banderas)
+    sitpWaypoints.push([4.618, -74.098]); // Américas / Carrera 50
+    sitpWaypoints.push([4.655, -74.075]); // NQS / Calle 68
+    sitpWaypoints.push([4.684, -74.058]); // Calle 100
+  } else if (oLat < 4.58 && dLat > 4.65) {
+    sitpWaypoints.push([4.595, -74.130]); // General Santander
+    sitpWaypoints.push([4.640, -74.080]); // NQS Central
+  }
+  sitpWaypoints.push([dLat, dLng]);
+
+  const sitpOsrm = await fetchOsrmGeometry('driving', sitpWaypoints);
   const sitpDist = sitpOsrm.distanceKm;
   const sitpTimeMin = Math.round((sitpDist / 17) * 60) + 8;
-  const realZonal = getRealSitpRoute(origin.nombre || '', destination.nombre || '');
 
   const sitpRoute = {
     id: 'sitp',
