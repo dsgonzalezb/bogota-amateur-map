@@ -1,0 +1,222 @@
+{
+  "USAQUEN": {
+    "color": "#3b82f6",
+    "estrato_predominante": 5,
+    "estrato_texto": "Estratos 4 a 6 (Ingresos Altos)",
+    "nivel_ingresos": "Alto",
+    "tasa_mortalidad": 6.2,
+    "tasa_homicidios": 6.5,
+    "nivel_riesgo": "Bajo",
+    "poblacion": "560.000 hab.",
+    "resumen": "Zona residencial de alta renta, centros empresariales (Santa Bárbara, Teleport) y clínicas."
+  },
+  "CHAPINERO": {
+    "color": "#06b6d4",
+    "estrato_predominante": 5,
+    "estrato_texto": "Estratos 4 a 6 (Ingresos Altos)",
+    "nivel_ingresos": "Alto",
+    "tasa_mortalidad": 6.8,
+    "tasa_homicidios": 8.2,
+    "nivel_riesgo": "Medio",
+    "poblacion": "180.000 hab.",
+    "resumen": "Distrito financiero, Zona G gastronómica, universidades y comercio de lujo (Zona Rosa)."
+  },
+  "SANTA FE": {
+    "color": "#ef4444",
+    "estrato_predominante": 2,
+    "estrato_texto": "Estratos 1 a 3 (Ingresos Bajos-Medios)",
+    "nivel_ingresos": "Medio-Bajo",
+    "tasa_mortalidad": 8.4,
+    "tasa_homicidios": 28,
+    "nivel_riesgo": "Alto",
+    "poblacion": "110.000 hab.",
+    "resumen": "Centro histórico, Museo Nacional, comercio popular mayorista y Centro Internacional."
+  },
+  "SAN CRISTOBAL": {
+    "color": "#f97316",
+    "estrato_predominante": 2,
+    "estrato_texto": "Estratos 1 a 2 (Ingresos Bajos)",
+    "nivel_ingresos": "Bajo",
+    "tasa_mortalidad": 5.8,
+    "tasa_homicidios": 18.5,
+    "nivel_riesgo": "Medio-Alto",
+    "poblacion": "410.000 hab.",
+    "resumen": "Ladera oriental sur, zonas de patrimonio obrero, comercio vecinal y cerros orientales."
+  },
+  "USME": {
+    "color": "#84cc16",
+    "estrato_predominante": 1,
+    "estrato_texto": "Estratos 1 a 2 (Ingresos Bajos)",
+    "nivel_ingresos": "Bajo",
+    "tasa_mortalidad": 5.2,
+    "tasa_homicidios": 19,
+    "nivel_riesgo": "Medio-Alto",
+    "poblacion": "430.000 hab.",
+    "resumen": "Amplia extensión rural, asentamientos populares y cuenca del río Tunjuelo."
+  },
+  "TUNJUELITO": {
+    "color": "#eab308",
+    "estrato_predominante": 2,
+    "estrato_texto": "Estratos 2 a 3 (Ingresos Medios-Bajos)",
+    "nivel_ingresos": "Medio-Bajo",
+    "tasa_mortalidad": 6.7,
+    "tasa_homicidios": 14,
+    "nivel_riesgo": "Medio",
+    "poblacion": "200.000 hab.",
+    "resumen": "Tradición de curtiembres en San Benito, comercio popular y Parque El Tunal."
+  },
+  "BOSA": {
+    "color": "#ec4899",
+    "estrato_predominante": 2,
+    "estrato_texto": "Estratos 1 a 2 (Ingresos Bajos)",
+    "nivel_ingresos": "Bajo",
+    "tasa_mortalidad": 4.8,
+    "tasa_homicidios": 20.5,
+    "nivel_riesgo": "Alto",
+    "poblacion": "780.000 hab.",
+    "resumen": "Una de las zonas más densas, sede del Patio Taller del Metro y comercio minorista vibrante."
+  },
+  "KENNEDY": {
+    "color": "#a855f7",
+    "estrato_predominante": 3,
+    "estrato_texto": "Estratos 2 a 3 (Ingresos Medios-Bajos)",
+    "nivel_ingresos": "Medio",
+    "tasa_mortalidad": 5.6,
+    "tasa_homicidios": 17.8,
+    "nivel_riesgo": "Alto",
+    "poblacion": "1.050.000 hab.",
+    "resumen": "La localidad más poblada de Bogotá, sede de Corabastos y gran polo comercial e industrial."
+  },
+  "FONTIBON": {
+    "color": "#14b8a6",
+    "estrato_predominante": 3,
+    "estrato_texto": "Estratos 3 a 4 (Ingresos Medios)",
+    "nivel_ingresos": "Medio",
+    "tasa_mortalidad": 5.9,
+    "tasa_homicidios": 10.2,
+    "nivel_riesgo": "Bajo-Medio",
+    "poblacion": "420.000 hab.",
+    "resumen": "Hub logístico, Aeropuerto El Dorado, zonas francas industriales y Ciudad Salitre Occidental."
+  },
+  "ENGATIVA": {
+    "color": "#6366f1",
+    "estrato_predominante": 3,
+    "estrato_texto": "Estrato 3 (Ingresos Medios)",
+    "nivel_ingresos": "Medio",
+    "tasa_mortalidad": 6.1,
+    "tasa_homicidios": 11.5,
+    "nivel_riesgo": "Medio",
+    "poblacion": "890.000 hab.",
+    "resumen": "Gran concentración residencial, comercial (Álamos, Diverplaza) y Parque Metropolitano Simón Bolívar."
+  },
+  "SUBA": {
+    "color": "#10b981",
+    "estrato_predominante": 4,
+    "estrato_texto": "Estratos 2 a 5 (Gran Diversidad)",
+    "nivel_ingresos": "Medio-Alto",
+    "tasa_mortalidad": 5.4,
+    "tasa_homicidios": 9.8,
+    "nivel_riesgo": "Bajo-Medio",
+    "poblacion": "1.300.000 hab.",
+    "resumen": "La localidad con mayor área urbana, mezcla de cerros de alta renta y zonas populares como El Rincón."
+  },
+  "BARRIOS UNIDOS": {
+    "color": "#f59e0b",
+    "estrato_predominante": 3,
+    "estrato_texto": "Estratos 3 a 4 (Ingresos Medios)",
+    "nivel_ingresos": "Medio",
+    "tasa_mortalidad": 7.9,
+    "tasa_homicidios": 10,
+    "nivel_riesgo": "Medio",
+    "poblacion": "160.000 hab.",
+    "resumen": "Sector de muebles (12 de Octubre), repuestos automotrices (7 de Agosto) y Parque El Lago."
+  },
+  "TEUSAQUILLO": {
+    "color": "#8b5cf6",
+    "estrato_predominante": 4,
+    "estrato_texto": "Estratos 4 a 5 (Ingresos Medios-Altos)",
+    "nivel_ingresos": "Medio-Alto",
+    "tasa_mortalidad": 8.1,
+    "tasa_homicidios": 5.8,
+    "nivel_riesgo": "Bajo",
+    "poblacion": "155.000 hab.",
+    "resumen": "Arquitectura patrimonial inglesa, Ciudad Universitaria (UNAL), Estadio El Campín y alta calidad de vida."
+  },
+  "LOS MARTIRES": {
+    "color": "#dc2626",
+    "estrato_predominante": 2,
+    "estrato_texto": "Estratos 2 a 3 (Ingresos Medios-Bajos)",
+    "nivel_ingresos": "Medio-Bajo",
+    "tasa_mortalidad": 9.2,
+    "tasa_homicidios": 34.5,
+    "nivel_riesgo": "Crítico",
+    "poblacion": "95.000 hab.",
+    "resumen": "Epicentro comercial de San Victorino, Plaza España, San Andresito y alta complejidad de seguridad."
+  },
+  "ANTONIO NARIÑO": {
+    "color": "#d97706",
+    "estrato_predominante": 3,
+    "estrato_texto": "Estrato 3 (Ingresos Medios)",
+    "nivel_ingresos": "Medio",
+    "tasa_mortalidad": 7.8,
+    "tasa_homicidios": 13,
+    "nivel_riesgo": "Medio",
+    "poblacion": "115.000 hab.",
+    "resumen": "El barrio Restrepo (capital del calzado), Villa Mayor y comercio barrial tradicional."
+  },
+  "PUENTE ARANDA": {
+    "color": "#64748b",
+    "estrato_predominante": 3,
+    "estrato_texto": "Estrato 3 (Ingresos Medios)",
+    "nivel_ingresos": "Medio",
+    "tasa_mortalidad": 7.4,
+    "tasa_homicidios": 11.8,
+    "nivel_riesgo": "Medio",
+    "poblacion": "240.000 hab.",
+    "resumen": "El gran parque industrial y manufacturero de Bogotá, bodegas mayoristas y San Andresito de la 38."
+  },
+  "CANDELARIA": {
+    "color": "#ea580c",
+    "estrato_predominante": 2,
+    "estrato_texto": "Estratos 1 a 3 (Patrimonial)",
+    "nivel_ingresos": "Medio",
+    "tasa_mortalidad": 8.6,
+    "tasa_homicidios": 16.5,
+    "nivel_riesgo": "Medio-Alto",
+    "poblacion": "24.000 hab.",
+    "resumen": "Sede del gobierno nacional (Plaza de Bolívar, Casa de Nariño), museos, teatros y turismo internacional."
+  },
+  "RAFAEL URIBE URIBE": {
+    "color": "#fb7185",
+    "estrato_predominante": 2,
+    "estrato_texto": "Estratos 1 a 2 (Ingresos Bajos)",
+    "nivel_ingresos": "Bajo",
+    "tasa_mortalidad": 5.7,
+    "tasa_homicidios": 21.2,
+    "nivel_riesgo": "Alto",
+    "poblacion": "390.000 hab.",
+    "resumen": "Ladera suroriental, sectores como Quiroga, Olaya y comercio popular sobre la Av. Caracas."
+  },
+  "CIUDAD BOLIVAR": {
+    "color": "#e11d48",
+    "estrato_predominante": 1,
+    "estrato_texto": "Estratos 1 a 2 (Ingresos Bajos)",
+    "nivel_ingresos": "Bajo",
+    "tasa_mortalidad": 4.9,
+    "tasa_homicidios": 27.5,
+    "nivel_riesgo": "Crítico",
+    "poblacion": "780.000 hab.",
+    "resumen": "Gran extensión montañosa del sur, sistema TransMiCable, población muy joven y retos de equidad."
+  },
+  "SUMAPAZ": {
+    "color": "#059669",
+    "estrato_predominante": 1,
+    "estrato_texto": "Estrato 1 (Comunidad Campesina)",
+    "nivel_ingresos": "Rural",
+    "tasa_mortalidad": 5.1,
+    "tasa_homicidios": 2,
+    "nivel_riesgo": "Bajo",
+    "poblacion": "6.500 hab.",
+    "resumen": "La localidad más grande territorialmente (más del 40% del Distrito), reserva hídrica y páramo virgen."
+  }
+}
