@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, ExternalLink, Copy, Check, MapPin, ShieldAlert, DollarSign, HeartPulse, Bus, Navigation } from 'lucide-react';
+import { X, ExternalLink, Copy, Check, MapPin, ShieldAlert, DollarSign, HeartPulse, Bus, Navigation, Tag, Info } from 'lucide-react';
+import { getBarrioPopularAlias } from '../utils/barrioAliases';
 
 export default function BarrioDetailModal({ barrio, onClose, onPlanRoute }) {
   const [copied, setCopied] = useState(false);
@@ -9,6 +10,7 @@ export default function BarrioDetailModal({ barrio, onClose, onPlanRoute }) {
   const { properties } = barrio;
   const [lat, lng] = properties.centro || [4.6533, -74.0836];
   const locColor = properties.color_localidad || '#38bdf8';
+  const popularAlias = getBarrioPopularAlias(properties.codigo, properties.nombre);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(`${lat}, ${lng}`);
@@ -31,11 +33,19 @@ export default function BarrioDetailModal({ barrio, onClose, onPlanRoute }) {
       <div className="detail-header">
         <div>
           <h2 className="detail-title">{properties.nombre}</h2>
+          {popularAlias && (
+            <div style={{ marginTop: 3, marginBottom: 4, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(56, 189, 248, 0.12)', border: '1px solid rgba(56, 189, 248, 0.3)', padding: '2px 8px', borderRadius: 6, fontSize: '0.78rem', color: '#38bdf8' }}>
+              <Tag size={12} />
+              <span>Conocido en Google / calle como: <strong>{popularAlias}</strong></span>
+            </div>
+          )}
           <div className="detail-subtitle">
             Localidad:{' '}
             <strong style={{ color: locColor }}>
               {properties.localidad}
             </strong>
+            <span style={{ margin: '0 6px', color: '#475569' }}>•</span>
+            <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Sector Catastral Oficial IDECA</span>
           </div>
         </div>
         <button className="close-btn" onClick={onClose} title="Cerrar ficha">

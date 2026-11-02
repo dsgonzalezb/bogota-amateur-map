@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
+import { getBarrioPopularAlias } from '../utils/barrioAliases';
 
 // Fix standard marker icons in bundlers
 delete L.Icon.Default.prototype._getIconUrl;
@@ -282,11 +283,13 @@ export default function MapComponent({
           });
 
           // Dynamic hover tooltip that follows mouse cursor
+          const popular = getBarrioPopularAlias(p.codigo, p.nombre);
           layer.bindTooltip(
             `<div class="barrio-hover-content">
               <div style="font-size: 14px; font-weight: 800; color: #ffffff; margin-bottom: 2px;">
                 ${p.nombre}
               </div>
+              ${popular ? `<div style="font-size: 11px; font-weight: 600; color: #38bdf8; margin-bottom: 3px;">🏷️ ${popular}</div>` : ''}
               <div style="font-size: 12px; font-weight: 700; color: ${p.color_localidad || '#38bdf8'}; margin-bottom: 4px;">
                 Localidad ${p.localidad}
               </div>

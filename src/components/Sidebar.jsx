@@ -1,5 +1,6 @@
 import React from 'react';
-import { Search, X, MapPin, Download, Compass, Navigation, ShieldAlert, DollarSign } from 'lucide-react';
+import { Search, X, MapPin, Download, Compass, Navigation, ShieldAlert, DollarSign, Tag } from 'lucide-react';
+import { getBarrioPopularAlias } from '../utils/barrioAliases';
 
 export default function Sidebar({
   isOpen,
@@ -118,6 +119,7 @@ export default function Sidebar({
             const props = feature.properties;
             const isSelected = selectedBarrio && selectedBarrio.properties.codigo === props.codigo;
             const locColor = props.color_localidad || '#38bdf8';
+            const popularAlias = getBarrioPopularAlias(props.codigo, props.nombre);
 
             const riesgoColor =
               props.nivel_riesgo === 'Bajo'
@@ -139,6 +141,11 @@ export default function Sidebar({
                   <span className="barrio-name">{props.nombre}</span>
                   <span className="barrio-code-chip">{props.codigo}</span>
                 </div>
+                {popularAlias && (
+                  <div style={{ fontSize: '0.73rem', color: '#38bdf8', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Tag size={11} /> <span>{popularAlias}</span>
+                  </div>
+                )}
                 <div className="barrio-meta">
                   <span style={{ color: locColor, fontWeight: 700 }}>{props.localidad || 'Bogotá'}</span>
                   <span>•</span>

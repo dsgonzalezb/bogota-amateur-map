@@ -1,4 +1,5 @@
 // Real turn-by-turn routing using OpenStreetMap OSRM, Photon Geocoding and TransMilenio network
+import { getBarrioPopularAlias } from './barrioAliases.js';
 
 export function getDistanceKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
@@ -59,16 +60,22 @@ export async function searchPlaces(query, barrios = [], stations = []) {
     }
   });
 
-  // 2. Check Barrios
+  // 2. Check Barrios (Catastro Oficial y Nombres Populares/Comerciales como Bosconia, Unicentro, etc.)
   barrios.forEach((b) => {
-    if (b.properties.nombre.toLowerCase().includes(q)) {
+    const p = b.properties;
+    const popular = getBarrioPopularAlias(p.codigo, p.nombre);
+    const matchOficial = p.nombre.toLowerCase().includes(q) || (p.codigo && p.codigo.toLowerCase().includes(q));
+    const matchPopular = popular && popular.toLowerCase().includes(q);
+
+    if (matchOficial || matchPopular) {
       results.push({
-        id: `barrio-${b.properties.codigo}`,
+        id: `barrio-${p.codigo}`,
         tipo: 'barrio',
-        titulo: b.properties.nombre,
-        subtitulo: `Barrio en Localidad ${b.properties.localidad}`,
-        lat: b.properties.centro[0],
-        lng: b.properties.centro[1]
+        titulo: p.nombre,
+        subtitulo: popular ? `Conocido como: ${popular} • Localidad ${p.localidad}` : `Barrio en Localidad ${p.localidad}`,
+        popularAlias: popular,
+        lat: p.centro[0],
+        lng: p.centro[1]
       });
     }
   });
@@ -121,14 +128,17 @@ export function findClosestStation(lat, lng, stations) {
   return { ...closest, distanciaKm: Math.round(minD * 10) / 10, distMetros, walkMin };
 }
 
-// Find closest portal
-export function findClosestPortal(lat, lng, stations) {
-  const portals = stations.filter((s) => s.esPortal);
-  if (portals.length === 0) return findClosestStation(lat, lng, stations);
-  let closest = portals[0];
+// Find closest feeder hub (Portales y Estaciones Intermedias con plataforma de alimentación como Banderas o General Santander)
+export function findClosestFeederHub(lat, lng, stations) {
+  if (!stations || stations.length === 0) return null;
+  const feederHubs = stations.filter(
+    (s) => s.esPortal || ['banderas', 'general santander'].includes(s.nombre.toLowerCase().trim())
+  );
+  if (feederHubs.length === 0) return findClosestStation(lat, lng, stations);
+  let closest = feederHubs[0];
   let minD = Infinity;
 
-  for (const p of portals) {
+  for (const p of feederHubs) {
     const d = getDistanceKm(lat, lng, p.coordenadas[1], p.coordenadas[0]);
     if (d < minD) {
       minD = d;
@@ -138,6 +148,11 @@ export function findClosestPortal(lat, lng, stations) {
   const distMetros = Math.round(minD * 1000);
   const walkMin = Math.max(1, Math.ceil(distMetros / 80));
   return { ...closest, distanciaKm: Math.round(minD * 10) / 10, distMetros, walkMin };
+}
+
+// Retrocompatibilidad
+export function findClosestPortal(lat, lng, stations) {
+  return findClosestFeederHub(lat, lng, stations);
 }
 
 // Fetch real road/bike/foot geometry from OpenStreetMap OSRM
@@ -857,6 +872,87 @@ export const REAL_PORTAL_ALIMENTADORES = {
         'Llegada Plataforma Alimentadores: Portal 20 de Julio'
       ]
     }
+  ],
+  'Banderas': [
+    {
+      ruta: '8-2',
+      nombre: 'Castilla',
+      sectores: ['Castilla', 'Vergel', 'El Vergel', 'El Vergel Oriental', 'Vergel Oriental', 'Bosconia', 'Castilla La Nueva', 'Pío XII', 'Alsacia', 'Bavaria'],
+      paradas: [
+        'Paradero KR 81 - CL 10 (El Vergel Oriental / Bosconia)',
+        'CL 10 - KR 78 (Castilla La Nueva)',
+        'KR 78 - CL 8 (Castilla)',
+        'CL 8 - KR 75 (Pío XII)',
+        'Av. Américas - KR 75',
+        'Llegada Plataforma Alimentadores: Estación Intermedia Banderas'
+      ]
+    },
+    {
+      ruta: '8-1',
+      nombre: 'Kennedy Central',
+      sectores: ['Kennedy Central', 'Timiza', 'Carvajal', 'Hospital Kennedy'],
+      paradas: [
+        'Paradero CL 40 Sur - KR 78K (Hospital Kennedy)',
+        'KR 78B - CL 38C Sur (Kennedy Central)',
+        'Av. Primero de Mayo - CL 35B Sur',
+        'Av. Américas - KR 74',
+        'Llegada Plataforma Alimentadores: Estación Intermedia Banderas'
+      ]
+    },
+    {
+      ruta: '8-3',
+      nombre: 'Castilla Real',
+      sectores: ['Castilla Real', 'Sabana Grande', 'Monterrey', 'Valladolid'],
+      paradas: [
+        'Paradero KR 86 - CL 8C (Castilla Real)',
+        'CL 8 - KR 82 (Monterrey)',
+        'Av. Américas - KR 78',
+        'Llegada Plataforma Alimentadores: Estación Intermedia Banderas'
+      ]
+    },
+    {
+      ruta: '8-4',
+      nombre: 'Corabastos',
+      sectores: ['Corabastos', 'María Paz', 'El Amparo'],
+      paradas: [
+        'Paradero KR 80C - CL 2 Sur (Puerta 4 Corabastos)',
+        'Av. Américas - KR 80',
+        'Llegada Plataforma Alimentadores: Estación Intermedia Banderas'
+      ]
+    },
+    {
+      ruta: '8-5',
+      nombre: 'Biblioteca El Tintal',
+      sectores: ['Tintal', 'Biblioteca El Tintal', 'Vergel Occidental', 'Calandaima'],
+      paradas: [
+        'Paradero Av. Cali - CL 6D (Biblioteca El Tintal)',
+        'Av. Américas - Av. Boyacá',
+        'Llegada Plataforma Alimentadores: Estación Intermedia Banderas'
+      ]
+    },
+    {
+      ruta: '8-6',
+      nombre: 'Timiza',
+      sectores: ['Timiza', 'Boitá', 'Onasis', 'Pastrana'],
+      paradas: [
+        'Paradero KR 73 - CL 41 Sur (Timiza)',
+        'CL 40 Sur - KR 74',
+        'Av. Primero de Mayo - Av. Américas',
+        'Llegada Plataforma Alimentadores: Estación Intermedia Banderas'
+      ]
+    }
+  ],
+  'General Santander': [
+    {
+      ruta: '12-1',
+      nombre: 'Fátima',
+      sectores: ['Fátima', 'Venecia', 'San Vicente', 'Samore'],
+      paradas: [
+        'Paradero CL 51A Sur - KR 34 (Fátima)',
+        'Auto Sur - KR 51 (Venecia)',
+        'Llegada Plataforma Alimentadores: Estación Intermedia General Santander'
+      ]
+    }
   ]
 };
 
@@ -1323,18 +1419,50 @@ export async function computeMultimodalRoutes(origin, destination, stations = []
   };
 
   // 3. RUTA: MULTIMODAL (ALIMENTADOR VERDE REAL + TRANSMILENIO + CAMINATA)
-  // En Bogotá se prioriza el alimentador si la estación está a más de 250m o si el portal cubre la zona
+  // En Bogotá se prioriza el alimentador si la estación está a más de 250m o si el portal/hub cubre la zona
   const useAlimentador = stOrigin.distMetros > 250 || portalOrigin.distanciaKm <= 7.0;
   const realAlimentador = getRealAlimentador(portalOrigin, origin.nombre || '');
-  const alimentadorTimeMin = Math.round(portalOrigin.distanciaKm * 3.5) + 6;
+  const alimentadorEstMin = Math.round(portalOrigin.distanciaKm * 3.5) + 6;
 
-  const multiPoints = [
-    [oLat, oLng],
-    ...tmTrunkOsrm.latlngs,
-    ...walk2Osrm.latlngs
-  ];
+  // Calculamos la geometría REAL del alimentador por vía terrestre (OSRM) para que siga exactamente las calles y avenidas
+  let feederPoints = [];
+  let feederDistKm = portalOrigin.distanciaKm;
+  let feederMin = alimentadorEstMin;
 
-  const totalMultiMin = (useAlimentador ? alimentadorTimeMin : walk1Min) + tmTimeMin + walk2Min;
+  if (useAlimentador) {
+    const feederOsrm = await fetchOsrmGeometry('driving', [
+      [oLat, oLng],
+      [portalOrigin.coordenadas[1], portalOrigin.coordenadas[0]]
+    ]);
+    if (feederOsrm.latlngs && feederOsrm.latlngs.length > 0) {
+      feederPoints = feederOsrm.latlngs;
+      feederDistKm = feederOsrm.distanceKm;
+      feederMin = feederOsrm.durationMin || alimentadorEstMin;
+    } else {
+      feederPoints = [[oLat, oLng], [portalOrigin.coordenadas[1], portalOrigin.coordenadas[0]]];
+    }
+  }
+
+  // Si se usa alimentador, el viaje troncal de TransMilenio parte desde el portal/intercambiador (ej: Banderas)
+  const multiTrunkOrigin = useAlimentador ? portalOrigin : stOrigin;
+  const multiTrunkPlan = getTrunkRoutePlan(multiTrunkOrigin, stDest, stations);
+  const multiTrunkOsrm = await fetchOsrmGeometry('driving', multiTrunkPlan.waypoints);
+  const multiTmDist = multiTrunkOsrm.distanceKm || tmDist;
+  const multiTmTimeMin = Math.round((multiTmDist / 26) * 60) + (multiTrunkPlan.transferStation ? 7 : 4);
+
+  const multiPoints = useAlimentador
+    ? [
+        ...feederPoints,
+        ...multiTrunkOsrm.latlngs,
+        ...walk2Osrm.latlngs
+      ]
+    : [
+        ...walk1Osrm.latlngs,
+        ...multiTrunkOsrm.latlngs,
+        ...walk2Osrm.latlngs
+      ];
+
+  const totalMultiMin = (useAlimentador ? feederMin : walk1Min) + multiTmTimeMin + walk2Min;
 
   const multimodalRoute = {
     id: 'multimodal',
@@ -1342,14 +1470,14 @@ export async function computeMultimodalRoutes(origin, destination, stations = []
     icono: 'bus-front',
     color: '#3b82f6',
     tiempoTotalMin: totalMultiMin,
-    distanciaKm: Math.round((portalOrigin.distanciaKm + tmDist + walk2Osrm.distanceKm) * 10) / 10,
+    distanciaKm: Math.round(((useAlimentador ? feederDistKm : walk1Osrm.distanceKm) + multiTmDist + walk2Osrm.distanceKm) * 10) / 10,
     costoCop: 3550,
     resumen: useAlimentador
-      ? `Alimentador oficial ${realAlimentador.ruta} desde tu barrio hacia ${portalOrigin.nombre}, conexión con ${trunkPlan.official.servicio}.`
+      ? `Alimentador oficial ${realAlimentador.ruta} desde tu barrio hacia ${portalOrigin.nombre}, conexión con ${multiTrunkPlan.official.servicio}.`
       : `Acceso peatonal corto a ${stOrigin.nombre}, viaje troncal y llegada a destino.`,
     estacionOrigen: useAlimentador ? portalOrigin : stOrigin,
     estacionDestino: stDest,
-    paradasIntermedias: trunkPlan.intermediateNames,
+    paradasIntermedias: multiTrunkPlan.intermediateNames,
     stats: [
       { label: 'Tiempo Total', val: `${totalMultiMin} min` },
       { label: 'Tarifa Tullave', val: '$3.550 COP' },
@@ -1362,8 +1490,8 @@ export async function computeMultimodalRoutes(origin, destination, stations = []
             tipo: 'alimentador',
             titulo: `1. Bus Alimentador Verde (Ruta Oficial ${realAlimentador.ruta} - ${realAlimentador.nombre})`,
             detalle: `Abordas en el paradero más cercano de tu barrio hacia ${portalOrigin.nombre} (tarifa $0 COP en bus verde con tarjeta Tullave).`,
-            distancia: `${portalOrigin.distanciaKm} km`,
-            tiempo: `${alimentadorTimeMin} min`,
+            distancia: `${feederDistKm} km`,
+            tiempo: `${feederMin} min`,
             color: '#84cc16',
             paradas: realAlimentador.paradas || [
               `Paradero barrial inicial (${origin.nombre})`,
@@ -1382,12 +1510,12 @@ export async function computeMultimodalRoutes(origin, destination, stations = []
           },
       {
         tipo: 'transmilenio',
-        titulo: `2. TransMilenio Troncal (Servicio Oficial ${trunkPlan.official.servicio})`,
-        detalle: `Recorrido expreso por carril exclusivo troncal hacia ${stDest.nombre}.${trunkPlan.transferStation ? ` Conexión en ${trunkPlan.transferStation.nombre}.` : ''}`,
-        distancia: `${tmDist} km`,
-        tiempo: `${tmTimeMin} min`,
+        titulo: `2. TransMilenio Troncal (Servicio Oficial ${multiTrunkPlan.official.servicio})`,
+        detalle: `Recorrido expreso por carril exclusivo troncal hacia ${stDest.nombre}.${multiTrunkPlan.transferStation ? ` Conexión en ${multiTrunkPlan.transferStation.nombre}.` : ''}`,
+        distancia: `${multiTmDist} km`,
+        tiempo: `${multiTmTimeMin} min`,
         color: '#ef4444',
-        paradas: trunkPlan.intermediateNames
+        paradas: multiTrunkPlan.intermediateNames
       },
       {
         tipo: 'caminata',
@@ -1401,7 +1529,7 @@ export async function computeMultimodalRoutes(origin, destination, stations = []
     puntosGeo: multiPoints,
     pins: [
       { lat: oLat, lng: oLng, label: 'Origen' },
-      { lat: (useAlimentador ? portalOrigin : stOrigin).coordenadas[1], lng: (useAlimentador ? portalOrigin : stOrigin).coordenadas[0], label: useAlimentador ? portalOrigin.nombre : stOrigin.nombre },
+      { lat: (useAlimentador ? portalOrigin : stOrigin).coordenadas[1], lng: (useAlimentador ? portalOrigin : stOrigin).coordenadas[0], label: useAlimentador ? `Abordar Alimentador -> ${portalOrigin.nombre}` : stOrigin.nombre },
       { lat: stDest.coordenadas[1], lng: stDest.coordenadas[0], label: stDest.nombre },
       { lat: dLat, lng: dLng, label: 'Destino Exacto' }
     ]

@@ -7,6 +7,7 @@ import BarrioDetailModal from './components/BarrioDetailModal';
 import RoutePlannerModal from './components/RoutePlannerModal';
 import MapLegend from './components/MapLegend';
 import { computeMultimodalRoutes, reverseGeocodePoint } from './utils/routePlanner';
+import { getBarrioPopularAlias } from './utils/barrioAliases';
 import './App.css';
 
 // Point-in-polygon algorithm (Ray casting)
@@ -181,11 +182,13 @@ export default function App() {
 
     return barriosData.features.filter((f) => {
       const p = f.properties;
+      const popular = getBarrioPopularAlias(p.codigo, p.nombre);
       const matchSearch =
         !q ||
         p.nombre.toLowerCase().includes(q) ||
         p.codigo.toLowerCase().includes(q) ||
-        (p.localidad && p.localidad.toLowerCase().includes(q));
+        (p.localidad && p.localidad.toLowerCase().includes(q)) ||
+        (popular && popular.toLowerCase().includes(q));
 
       const matchLoc = selectedLocalidad === 'ALL' || p.localidad === selectedLocalidad;
       const matchTipo = selectedTipo === 'ALL' || p.tipo === selectedTipo;
