@@ -31,7 +31,9 @@ Permite alternar la visualización del mapa entre 4 dimensiones socio-espaciales
   * **Metro Línea 2 (Proyectada subterránea):** Corredor hacia Suba y Engativá.
   * **Regiotram de Occidente:** Tren de cercanías regional en construcción conectando Facatativá, Madrid, Mosquera y Funza con el centro de Bogotá.
   * **Regiotram del Norte:** Corredor férreo proyectado por la Carrera 9na hacia Chía y Zipaquirá.
-* 🚲 **Red de Ciclorrutas:** Corredores protegidos emblemáticos (Séptima, Calle 26, Carrera 11, Canal Salitre, Boyacá y Ciudad de Cali).
+* 🚲 **Red de Ciclorrutas de Alta Precisión:** 14 corredores protegidos principales trazados con snapping milimétrico sobre la malla vial de OpenStreetMap (más de 11.000 nodos viales que siguen fielmente las curvas, andenes y avenidas sin cortar casas: Carrera Séptima, Calle 26 El Dorado, Boyacá, Ciudad de Cali, Américas, Calle 80, NQS, Canal Salitre, Alameda El Porvenir, Primero de Mayo, Carrera 15, Suba, Autonorte y Av. Guayacanes).
+* 🏷️ **Búsqueda Dual (Catastro Oficial + Nombres Populares y Comerciales):** Integración de alias comerciales y populares (ej: *Bosconia* para *El Vergel Oriental*, *Unicentro* para *Santa Bárbara Central*, *Colina Campestre* para *El Plan*, *Zona Rosa / Zona T* para *Antiguo Country*), permitiendo buscar y navegar la ciudad tanto por su censo oficial como por su nombre cotidiano.
+* 🚏 **Soporte de Estaciones Intermedias con Alimentación:** Reconocimiento de hubs emblemáticos como **Banderas** (con sus 6 rutas alimentadoras oficiales: *8-2 Castilla, 8-1 Kennedy Central, 8-3 Castilla Real, 8-4 Corabastos, 8-5 Tintal y 8-6 Timiza*) y **General Santander** (*12-1 Fátima*).
 * 🚧 **Obras Principales IDU:** Trazados de las obras de mayor impacto urbano (Troncal Av. 68, Av. Ciudad de Cali Sur, Extensión Caracas Sur, etc.).
 * 🛍️ **Zonas Comerciales y Centralidades:** Polígonos de distritos comerciales clave (San Victorino, Restrepo, Zona T / Rosa, Unicentro, Corabastos, 7 de Agosto, etc.).
 

@@ -418,12 +418,13 @@ export default function MapComponent({
 
     if (showCiclovias) {
       cicloviasLayerRef.current = L.geoJSON(cicloviasData, {
-        style: {
-          color: '#22c55e',
+        style: (feature) => ({
+          color: feature.properties?.color || '#10b981',
           weight: 3.5,
-          dashArray: '5, 4',
-          opacity: 0.95
-        },
+          opacity: 0.9,
+          lineCap: 'round',
+          lineJoin: 'round'
+        }),
         onEachFeature: (feature, layer) => {
           layer.on('click', (e) => {
             if (pickingPointRef.current) {
@@ -432,9 +433,10 @@ export default function MapComponent({
             }
           });
           layer.bindTooltip(
-            `<div>
-              <div style="font-weight:700; color:#22c55e;">🚲 ${feature.properties.nombre}</div>
-              <div style="font-size:11px; color:#cbd5e1;">${feature.properties.tipo} (${feature.properties.longitud})</div>
+            `<div style="font-family: inherit; padding: 2px;">
+              <div style="font-weight: 800; color: #10b981; font-size: 13px;">🚲 ${feature.properties.nombre}</div>
+              <div style="font-size: 11px; color: #f8fafc; margin-top: 2px;"><b>Tipo:</b> ${feature.properties.tipo}</div>
+              <div style="font-size: 11px; color: #cbd5e1;"><b>Longitud del corredor:</b> ${feature.properties.longitud}</div>
              </div>`,
             { sticky: true }
           );
