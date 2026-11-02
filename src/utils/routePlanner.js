@@ -1272,14 +1272,14 @@ export async function computeMultimodalRoutes(origin, destination, stations = []
     color: '#ef4444',
     tiempoTotalMin: totalTmTimeMin,
     distanciaKm: Math.round((walk1Osrm.distanceKm + tmDist + walk2Osrm.distanceKm) * 10) / 10,
-    costoCop: 3150,
+    costoCop: 3550,
     resumen: `Caminata a estación ${stOrigin.nombre}, abordaje de ${trunkPlan.official.servicio} y llegada a ${stDest.nombre}.`,
     estacionOrigen: stOrigin,
     estacionDestino: stDest,
     paradasIntermedias: trunkPlan.intermediateNames,
     stats: [
       { label: 'Tiempo', val: `${totalTmTimeMin} min` },
-      { label: 'Tarifa', val: '$3.150 COP' },
+      { label: 'Tarifa', val: '$3.550 COP' },
       { label: 'Servicio', val: trunkPlan.official.servicio },
       { label: 'Caminata', val: `${stOrigin.distMetros + stDest.distMetros} m` }
     ],
@@ -1343,7 +1343,7 @@ export async function computeMultimodalRoutes(origin, destination, stations = []
     color: '#3b82f6',
     tiempoTotalMin: totalMultiMin,
     distanciaKm: Math.round((portalOrigin.distanciaKm + tmDist + walk2Osrm.distanceKm) * 10) / 10,
-    costoCop: 3150,
+    costoCop: 3550,
     resumen: useAlimentador
       ? `Alimentador oficial ${realAlimentador.ruta} desde tu barrio hacia ${portalOrigin.nombre}, conexión con ${trunkPlan.official.servicio}.`
       : `Acceso peatonal corto a ${stOrigin.nombre}, viaje troncal y llegada a destino.`,
@@ -1352,8 +1352,8 @@ export async function computeMultimodalRoutes(origin, destination, stations = []
     paradasIntermedias: trunkPlan.intermediateNames,
     stats: [
       { label: 'Tiempo Total', val: `${totalMultiMin} min` },
-      { label: 'Tarifa Tullave', val: '$3.150 COP' },
-      { label: 'Transbordo', val: 'Ventana 110 min ($0)' },
+      { label: 'Tarifa Tullave', val: '$3.550 COP' },
+      { label: 'Transbordo', val: 'Ventana 125 min ($0)' },
       { label: 'Alimentador', val: useAlimentador ? `Ruta ${realAlimentador.ruta}` : 'No requerido' }
     ],
     tramos: [
@@ -1423,11 +1423,11 @@ export async function computeMultimodalRoutes(origin, destination, stations = []
     color: '#0284c7',
     tiempoTotalMin: sitpTimeMin,
     distanciaKm: sitpDist,
-    costoCop: 3150,
+    costoCop: 3550,
     resumen: `Viaje en bus azul zonal por malla vial arterial sin ingresar a troncal cerrada.`,
     stats: [
       { label: 'Tiempo', val: `${sitpTimeMin} min` },
-      { label: 'Tarifa', val: '$3.150 COP' },
+      { label: 'Tarifa', val: '$3.550 COP' },
       { label: 'Ruta SITP', val: realZonal.ruta },
       { label: 'Paraderos', val: `${realZonal.paradas?.length || Math.round(sitpDist * 2.2)} paradas` }
     ],
