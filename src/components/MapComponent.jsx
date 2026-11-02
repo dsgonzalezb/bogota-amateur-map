@@ -456,20 +456,29 @@ export default function MapComponent({
 
     if (showObras) {
       obrasLayerRef.current = L.geoJSON(obrasData, {
-        style: {
-          color: '#f97316',
-          weight: 5,
-          dashArray: '8, 6',
-          opacity: 0.95
-        },
+        style: (feature) => ({
+          color: feature.properties?.color || '#f97316',
+          weight: 4.5,
+          dashArray: '8, 5',
+          opacity: 0.95,
+          lineCap: 'round',
+          lineJoin: 'round'
+        }),
         onEachFeature: (feature, layer) => {
           const p = feature.properties;
+          layer.on('click', (e) => {
+            if (pickingPointRef.current) {
+              L.DomEvent.stopPropagation(e);
+              if (onMapClickRef.current) onMapClickRef.current(e.latlng);
+            }
+          });
           layer.bindTooltip(
-            `<div style="font-family: inherit;">
-              <div style="font-weight:800; color:#f97316;">🚧 Obra: ${p.nombre}</div>
-              <div style="font-size:11px; color:#f8fafc;"><b>Entidad:</b> ${p.entidad}</div>
-              <div style="font-size:11px; color:#cbd5e1;"><b>Avance:</b> ${p.avance}</div>
-              <div style="font-size:10px; color:#94a3b8; margin-top:2px;">${p.impacto}</div>
+            `<div style="font-family: inherit; padding: 2px;">
+              <div style="font-weight: 800; color: #f97316; font-size: 13px;">🚧 ${p.nombre}</div>
+              <div style="font-size: 11px; color: #f8fafc; margin-top: 2px;"><b>Entidad:</b> ${p.entidad}</div>
+              <div style="font-size: 11px; color: #fbbf24;"><b>Estado / Avance:</b> ${p.avance}</div>
+              ${p.longitud_km ? `<div style="font-size: 11px; color: #cbd5e1;"><b>Longitud del corredor:</b> ${p.longitud_km} km</div>` : ''}
+              <div style="font-size: 10px; color: #94a3b8; margin-top: 4px; max-width: 250px;">${p.impacto}</div>
              </div>`,
             { sticky: true }
           );
@@ -478,7 +487,7 @@ export default function MapComponent({
     }
   }, [obrasData, showObras]);
 
-  // Render Zonas Comerciales
+  // Render Zonas Comerciales (Enmarcadas 100% en Manzanas y Barrios Catastrales Oficiales)
   useEffect(() => {
     if (!mapInstanceRef.current || !zonasComercialesData) return;
 
@@ -489,19 +498,27 @@ export default function MapComponent({
 
     if (showZonasComerciales) {
       zonasComercialesLayerRef.current = L.geoJSON(zonasComercialesData, {
-        style: {
-          color: '#f59e0b',
+        style: (feature) => ({
+          color: feature.properties?.color || '#f59e0b',
           weight: 2.5,
-          fillColor: '#f59e0b',
-          fillOpacity: 0.35
-        },
+          fillColor: feature.properties?.color || '#f59e0b',
+          fillOpacity: 0.28,
+          dashArray: '3, 3'
+        }),
         onEachFeature: (feature, layer) => {
           const p = feature.properties;
+          layer.on('click', (e) => {
+            if (pickingPointRef.current) {
+              L.DomEvent.stopPropagation(e);
+              if (onMapClickRef.current) onMapClickRef.current(e.latlng);
+            }
+          });
           layer.bindTooltip(
-            `<div style="font-family: inherit;">
-              <div style="font-weight:800; color:#f59e0b;">🛍️ ${p.nombre}</div>
-              <div style="font-size:11px; color:#f8fafc; font-weight:600;">${p.categoria}</div>
-              <div style="font-size:10px; color:#cbd5e1; margin-top:2px; max-width:220px;">${p.descripcion}</div>
+            `<div style="font-family: inherit; padding: 2px;">
+              <div style="font-weight: 800; color: #f59e0b; font-size: 13px;">🛍️ ${p.nombre}</div>
+              <div style="font-size: 11px; color: #f8fafc; font-weight: 600; margin-top: 2px;">${p.categoria}</div>
+              ${p.barrios_incluidos ? `<div style="font-size: 10px; color: #38bdf8; margin-top: 2px;"><b>Sectores:</b> ${p.barrios_incluidos}</div>` : ''}
+              <div style="font-size: 10px; color: #cbd5e1; margin-top: 3px; max-width: 240px;">${p.descripcion}</div>
              </div>`,
             { sticky: true }
           );
